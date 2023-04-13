@@ -1,0 +1,58 @@
+---
+title: "Homework 9"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Name of team members: Angelina Allen 
+##Repository Link: 
+
+#Part 1: Data tidying
+
+```{r}
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+av
+```
+
+```{r}
+library(tidyverse)
+av0 = av %>% filter(Name.Alias != "")
+
+av1 = av0 %>% gather(key = time, value = death, c(11,13, 15, 17, 19)) %>% select(Name.Alias, time, death) %>% mutate(time= parse_number(time))
+
+av2 = av0 %>% gather(key = time, value = return, c(12, 14, 16, 18, 20)) %>% select(Name.Alias, time, return) %>% mutate(time= parse_number(time))
+
+av.neat = left_join(av1, av2, by = c("Name.Alias", "time"))
+
+head(av.neat)
+```
+*Here I cleaned the data*
+
+```{r}
+av0 = av0%>% filter(Name.Alias != "Vance Astrovik")
+
+av1 = av0 %>% gather(key = time, value = death, c(11,13, 15, 17, 19)) %>% select(Name.Alias, time, death) %>% mutate(time= parse_number(time))
+
+av2 = av0 %>% gather(key = time, value = return, c(12, 14, 16, 18, 20)) %>% select(Name.Alias, time, return) %>% mutate(time= parse_number(time))
+
+av.neat = left_join(av1, av2, by = c("Name.Alias", "time"))
+
+head(av.neat)
+```
+*Here we removed a characters name because he was in the data twice.*
+
+#Part two: Validation
+
+*There statment I will be validating is: "I counted 89 total deaths — some unlucky Avengers are basically Meat Loaf with an E-ZPass — and on 57 occasions the individual made a comeback."*
+
+```{r}
+table(av.neat['death'])
+```
+*Here we see there was 82 deaths instead of 89. I think this could be from us cleaning our data and elimating a character that is has a lower number.*
+
+```{r}
+table(av.neat['return'])
+```
+*Here we see 55 of them returned instead of 57. Again I belive we have a lower number due to the fact of cleaning the data.*
